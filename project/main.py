@@ -10,8 +10,6 @@ from config import config
 #     pocs_router
 from handlers import common_router
 
-
-
 # Создание логера
 log = logging.getLogger('')
 log.setLevel(logging.DEBUG)

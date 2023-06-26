@@ -1,5 +1,5 @@
 import time
-from typing import List, Any
+from typing import List
 
 from aiogram import Router, F
 from aiogram.filters import Command
@@ -9,8 +9,7 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKe
 from config import config
 from db import is_exis_user, initialize_user, get_user_status, StatusEnum, update_user_status, get_winners_from_db
 from keyboards.main_menu import start_markup, inline_btn_menu
-from questions import questions, Question
-
+from questions import questions
 from states import States
 
 router = Router()
@@ -182,23 +181,3 @@ def create_markup(options: List[str]):
     )
 
     return options_markup
-
-#
-# @router.callback_query(F.data == "find_cve_by_id")
-# async def process_callback_add_id(callback_query: CallbackQuery, state: FSMContext):
-#     """
-#         find_cve_menu: handler for the button that adds the CVE`s id parameter
-#     """
-#     await callback_query.message.edit_text("Введите Id")
-#     await state.set_state(FindCVEGroup.id)
-#
-#
-# @router.callback_query(F.data == "valuable_cve")
-# async def process_callback_valuable_cve(callback_query: CallbackQuery, state: FSMContext):
-#     """
-#         valuable_cve menu handler
-#     """
-#     await callback_query.message.edit_text(
-#         "Выберите период, за который велась статистика популярности cve",
-#         reply_markup=most_valuable_cve_markup
-#     )

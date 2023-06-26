@@ -1,14 +1,12 @@
 # импортируем классы, используемые для определения атрибутов модели
-from enum import Enum, auto
+from enum import Enum
 from typing import List
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, create_engine, SmallInteger, CHAR
-
-# импортируем объекты для создания отношения между объектами
-from sqlalchemy.orm import relationship, backref, sessionmaker
-
+from sqlalchemy import Column, Integer, String, create_engine, CHAR
 # объект для подключения ядро базы данных
 from sqlalchemy.ext.declarative import declarative_base
+# импортируем объекты для создания отношения между объектами
+from sqlalchemy.orm import sessionmaker
 
 from config import config
 
@@ -100,40 +98,3 @@ if __name__ == '__main__':
     else:
         initialize_user(228, 'pupa')
     pass
-
-#
-# def main():
-#     """Main entry point of program"""
-#     # book = session.query(Book).filter_by(Book.title == "The Stand").one_or_none()
-#     # print(f"Authors name: {book.author.first_name} {book.author.last_name}")
-#     #
-#     # book = session.add().filter_by(Book.title == "The Stand").one_or_none()
-#     # print(f"Authors name: {book.author.first_name} {book.author.last_name}")
-#
-#     # Определяем число книг, изданных каждым издательством
-#     books_by_publisher = get_books_by_publishers(session, ascending=False)
-#     for row in books_by_publisher:
-#         print(f"Publisher: {row.name}, total books: {row.total_books}")
-#     print()
-#
-#     # Определяем число авторов у каждого издательства
-#     authors_by_publisher = get_authors_by_publishers(session)
-#     for row in authors_by_publisher:
-#         print(f"Publisher: {row.name}, total authors: {row.total_authors}")
-#     print()
-#
-#     # Иерархический вывод данных
-#     authors = get_authors(session)
-#     output_author_hierarchy(authors)
-#
-#     # Добавляем новую книгу
-#     add_new_book(
-#         session,
-#         author_name="Stephen King",
-#         book_title="The Stand",
-#         publisher_name="Random House",
-#     )
-#
-#     # Вывод обновленных сведений
-#     authors = get_authors(session)
-#     output_author_hierarchy(authors)
