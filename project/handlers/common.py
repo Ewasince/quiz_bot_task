@@ -1,3 +1,4 @@
+import time
 from typing import List, Any
 
 from aiogram import Router, F
@@ -6,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 
 from config import config
-from db import is_exis_user, initialize_user, get_user_status, StatusEnum, update_user_status
+from db import is_exis_user, initialize_user, get_user_status, StatusEnum, update_user_status, get_winners_from_db
 from keyboards.main_menu import start_markup, inline_btn_menu
 from questions import questions, Question
 
@@ -61,7 +62,7 @@ async def process_callback_main_menu(callback_query: CallbackQuery, state: FSMCo
 
     await state.clear()
     await state.set_state(States.quiz)
-    await state.update_data(question=0, true_answers=0)
+    await state.update_data(question=0, true_answers=0, update_time=time.time())
     # await answer_decorator(callback_query.message, "Вопрос 1", reply_markup=question_1.options_markup)
     await question(callback_query, state)
     return
@@ -73,10 +74,18 @@ async def process_callback_main_menu(callback_query: CallbackQuery, state: FSMCo
 async def question(callback_query: CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
     question_num = state_data['question']
+    last_time = state_data['update_time']
 
     if question_num != 0:
         last_question = questions[question_num - 1]
-        if int(callback_query.data) == last_question.true_option:
+
+        is_time_is_out = time.time() - last_time > last_question.time
+        check_time = last_question.time != 0
+        is_ansfer_is_true = int(callback_query.data) == last_question.true_option
+
+        if is_time_is_out and check_time:
+            await callback_query.message.answer('Ты не успел ответить на вопрос!')
+        elif is_ansfer_is_true:
             await callback_query.message.answer('Ты ответил правильно!')
             state_data['true_answers'] += 1
             pass
@@ -84,7 +93,6 @@ async def question(callback_query: CallbackQuery, state: FSMContext):
             await callback_query.message.answer('Ты ответил неверно(')
         pass
 
-    state_data['question'] += 1
     await state.update_data(state_data)
 
     if question_num == len(questions):
@@ -95,6 +103,10 @@ async def question(callback_query: CallbackQuery, state: FSMContext):
     question = questions[question_num]
 
     markup = create_markup(question.options)
+
+    state_data['question'] += 1
+    state_data['update_time'] = time.time()
+    await state.update_data(state_data)
 
     await callback_query.message.answer(question.question, reply_markup=markup)
 
@@ -142,6 +154,15 @@ async def end_quiz(callback_query: CallbackQuery, state: FSMContext):
     # await command_start_handler(callback_query, state)
 
     pass
+
+
+@router.message(F.from_user.id == config.admin_id and Command(commands=["winners"]))
+async def get_winners(message: Message, state: FSMContext):
+    users_winners = get_winners_from_db()
+    winners_usernames = [w.username for w in users_winners]
+    winners_usernames_str = '\n'.join(winners_usernames)
+    await message.answer(f"Вот список победителей:\n"
+                         f"{winners_usernames_str}")
 
 
 def create_markup(options: List[str]):

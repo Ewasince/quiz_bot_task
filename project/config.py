@@ -13,9 +13,7 @@ class Config(BaseModel):
 
     # secrets
     bot_token: str
-    # translator_token: str
-    # translator_folder: str
-    # github_token: str
+    admin_id: int
 
     # public config
     bot_name: str
@@ -25,16 +23,6 @@ class Config(BaseModel):
 
     database_filename: str
 
-    # cve_api: str
-    # cve_api_version: str
-
-    # max_cve_output: int
-    # show_repos: int
-    # show_searchsploit: int
-    #
-    # add_translate: bool
-    # add_epss: bool
-    # add_poc: bool
 
     # делаем конфиг неизменяемым
     class Config:

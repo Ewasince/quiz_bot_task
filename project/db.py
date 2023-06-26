@@ -1,5 +1,6 @@
 # импортируем классы, используемые для определения атрибутов модели
 from enum import Enum, auto
+from typing import List
 
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, create_engine, SmallInteger, CHAR
 
@@ -81,6 +82,13 @@ def get_user_status(user_id: int) -> StatusEnum:
 
     return StatusEnum(user.status)
 
+    pass
+
+
+def get_winners_from_db() -> List[Users]:
+    users = session.query(Users).filter_by(status=StatusEnum.PASSED.value).all()
+
+    return users
     pass
 
 
