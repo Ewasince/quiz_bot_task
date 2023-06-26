@@ -90,6 +90,12 @@ def get_winners_from_db() -> List[Users]:
     pass
 
 
+def clear_db():
+    session.query(Users).delete()
+    session.commit()
+    pass
+
+
 if __name__ == '__main__':
     test = is_exis_user(228)
 

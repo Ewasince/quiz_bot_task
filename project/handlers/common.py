@@ -7,7 +7,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 
 from config import config
-from db import is_exis_user, initialize_user, get_user_status, StatusEnum, update_user_status, get_winners_from_db
+from db import is_exis_user, initialize_user, get_user_status, StatusEnum, update_user_status, get_winners_from_db, \
+    clear_db
 from keyboards.main_menu import start_markup, inline_btn_menu
 from questions import questions
 from states import States
@@ -155,13 +156,21 @@ async def end_quiz(callback_query: CallbackQuery, state: FSMContext):
     pass
 
 
-@router.message(F.from_user.id == config.admin_id and Command(commands=["winners"]))
+# @router.message(F.from_user.id == config.admin_id and Command(commands=["winners"]))
+@router.message(Command(commands=["winners"]))
 async def get_winners(message: Message, state: FSMContext):
     users_winners = get_winners_from_db()
     winners_usernames = [w.username for w in users_winners]
     winners_usernames_str = '\n'.join(winners_usernames)
     await message.answer(f"Вот список победителей:\n"
                          f"{winners_usernames_str}")
+
+
+@router.message(Command(commands=["clear"]))
+async def clearn_db(message: Message, state: FSMContext):
+    clear_db()
+
+    await message.answer(f"База данных успешно очищена")
 
 
 def create_markup(options: List[str]):
